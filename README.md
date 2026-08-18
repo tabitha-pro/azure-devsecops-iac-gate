@@ -28,7 +28,7 @@ Automated DevSecOps CI/CD pipeline enforcing static code analysis and security g
 
 ---
 
-## File Structure
+### File Structure
 
 ```text
 .
@@ -36,9 +36,16 @@ Automated DevSecOps CI/CD pipeline enforcing static code analysis and security g
 │   └── workflows/
 │       └── devsecops-gate.yml
 └── main.tf
+```
 
-## Workflow Configuration (devsecops-gate.yml)
+---
 
+### Workflow Configuration
+
+<details>
+<summary><b>Click to expand <code>devsecops-gate.yml</code></b></summary>
+
+```yaml
 name: DevSecOps IaC Security Gate
 
 on:
@@ -65,9 +72,15 @@ jobs:
           framework: terraform
           output_format: cli
           soft_fail: false
+```
 
-## Local Verification Commands
+</details>
 
+---
+
+### Local Verification Commands
+
+```bash
 # Install Checkov scanner
 pip install checkov
 
@@ -76,11 +89,14 @@ terraform init
 
 # Run local static code scan
 checkov -d . --framework terraform
+```
 
-## Pipeline Status
+---
 
-Status: SUCCESS
+### Pipeline Status
 
-Branch: main
-
-Scan Duration: 38s
+| Metric | Details |
+| :--- | :--- |
+| **Status** | `SUCCESS` |
+| **Branch** | `main` |
+| **Scan Duration** | `38s` |
