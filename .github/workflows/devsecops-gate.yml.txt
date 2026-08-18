@@ -1,0 +1,46 @@
+name: "DevSecOps IaC Security Gate"
+
+# Run this automated check whenever code is pushed or a PR is opened
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  iac-security-scan:
+    name: "Run IaC Security Scans"
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Pull down the code from the GitHub repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Install Terraform inside the GitHub runner environment
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      # Step 3: Validate syntax
+      - name: Terraform Init & Validate
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      # Step 4: Run tfsec to scan for cloud security misconfigurations
+      # HARD FAIL: Stop the build if high risks are found
+      - name: Run tfsec Security Scan
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: .
+          soft_fail: false
+
+      # Step 5: Run Checkov policy checks
+      - name: Run Checkov Static Analysis
+        uses: bridgecrewio/checkov-action@master
+        with:
+          framework: terraform
+          output_format: cli
+          soft_fail: false
